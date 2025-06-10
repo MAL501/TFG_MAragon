@@ -1,1 +1,13 @@
-# TFG_MAragon
+<div align="center">
+Aquí pueden encontrar la presentación de mi TFG y los repositorios de dockerhub para poder descargar mis contenedores y ejecutar mi aplicación de la manera más sencilla posible:
+
+  <a href="https://www.canva.com/design/DAGp-rD_miw/DDO_F24uotKf-jfy829OGQ/edit?utm_content=DAGp-rD_miw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton">
+    <img src="https://img.shields.io/badge/Canva%20Design-00C4CC?style=for-the-badge&logo=canva&logoColor=white" alt="Canva Design"/>
+  </a>
+  <a href="https://hub.docker.com/repository/docker/mal501/matatena-backend/">
+    <img src="https://img.shields.io/badge/Docker%20Backend-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Backend"/>
+  </a>
+  <a href="https://hub.docker.com/repository/docker/mal501/matatena-frontend">
+    <img src="https://img.shields.io/badge/Docker%20Frontend-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Frontend"/>
+  </a>
+</div>

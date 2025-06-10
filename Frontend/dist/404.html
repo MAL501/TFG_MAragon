@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redireccionando...</title>
+  <script>
+    // Redirige todas las rutas a index.html
+    const baseUrl = '/Matatena';  // Asegúrate de que coincida con tu basename
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    
+    // Si la URL no coincide con el basename, redirige al inicio
+    if (pathSegments[0] !== 'Matatena') {
+      window.location.replace(`${baseUrl}/`);
+    } else {
+      // Si es una ruta válida, reconstruye la URL para React Router
+      const newPath = pathSegments.slice(1).join('/');
+      window.location.replace(`${baseUrl}/#${newPath ? `/${newPath}` : ''}${window.location.search}${window.location.hash}`);
+    }
+  </script>
+</head>
+<body>
+  <p>Redireccionando a la aplicación...</p>
+</body>
+</html>
