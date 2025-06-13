@@ -1,5 +1,92 @@
+import { apiRequest } from "../utils/api"
+
 export const getDice = () => {
   return Number.parseInt(Math.random() * 6 + 1)
+}
+
+// Nueva función para obtener un dado del servidor
+export const rollDiceFromServer = async () => {
+  try {
+    // Verificar que el token exista antes de hacer la solicitud
+    const token = localStorage.getItem("token")
+    if (!token) {
+      console.warn("⚠️ No hay token de autenticación disponible para obtener dado")
+      return getDice() // Fallback a dado local
+    }
+
+    console.log("🎲 Solicitando dado al servidor...")
+    console.log("🔑 Token disponible:", token ? `${token.substring(0, 20)}...` : "No token")
+
+    const data = await apiRequest("/dice/roll", {
+      method: "GET",
+    })
+
+    if (data.status === "success" && data.data && typeof data.data.dice === "number") {
+      console.log("🎲 Dado recibido del servidor:", data.data.dice)
+      return data.data.dice
+    }
+
+    console.error("❌ Formato de respuesta inesperado:", data)
+    throw new Error("Formato de respuesta inesperado del servidor")
+  } catch (error) {
+    console.error("❌ Error al obtener dado del servidor:", error)
+    console.log("🎲 Usando dado local como fallback")
+    // Fallback a dado local si falla el servidor
+    return getDice()
+  }
+}
+
+// Función para obtener las probabilidades del usuario
+export const getUserProbabilities = async () => {
+  try {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("No hay token de autenticación")
+    }
+
+    console.log("📊 Obteniendo probabilidades del usuario...")
+
+    const data = await apiRequest("/dice/probabilities", {
+      method: "GET",
+    })
+
+    if (data.status === "success" && data.data) {
+      console.log("📊 Probabilidades recibidas:", data.data)
+      return data.data
+    }
+
+    throw new Error("Error al obtener probabilidades del usuario")
+  } catch (error) {
+    console.error("❌ Error al obtener probabilidades:", error)
+    throw error
+  }
+}
+
+// Función para actualizar las probabilidades del usuario
+export const updateUserProbabilities = async (probabilities) => {
+  try {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      throw new Error("No hay token de autenticación")
+    }
+
+    console.log("📊 Actualizando probabilidades del usuario:", probabilities)
+
+    const data = await apiRequest("/dice/probabilities", {
+      method: "PUT",
+      body: JSON.stringify(probabilities),
+    })
+
+    if (data.status === "success") {
+      console.log("✅ Probabilidades actualizadas exitosamente")
+      return data.data
+    }
+
+    throw new Error("Error al actualizar probabilidades del usuario")
+  } catch (error) {
+    console.error("❌ Error al actualizar probabilidades:", error)
+    throw error
+  }
 }
 
 export const addDiceToColumn = (column, dice) => {

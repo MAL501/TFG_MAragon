@@ -41,16 +41,9 @@ export default function Options() {
         >
           Instrucciones
         </button>
-        
-        <Link to={ROUTES.RANKING} className="block">
-          <button className={todoAncho}>
-            Ranking
-          </button>
-        </Link>
-        
-        <a className="block" target='_blank' href="https://forms.gle/TbkAbQmDyzxoj1en9">
+        <a className="block" target='_blank' href="https://github.com/MAL501/">
           <button className={todoAnchoMorado}>
-            Danos tu opinión
+            Sobre mí
           </button>
         </a>
         

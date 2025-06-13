@@ -257,6 +257,14 @@ const WaitingRoom = () => {
       try {
         console.log("🚫 Cancelando partida...")
 
+        // Llama a la función para eliminar la partida
+        await gameService.deleteGame(gameId)
+
+        showNotification({
+          type: NOTIFICATION_TYPES.SUCCESS,
+          message: "Partida eliminada correctamente",
+        })
+
         // Desconectar del socket
         socketService.disconnect()
 
@@ -266,7 +274,7 @@ const WaitingRoom = () => {
         console.error("Error al cancelar partida:", error)
         showNotification({
           type: NOTIFICATION_TYPES.ERROR,
-          message: "Error al cancelar la partida",
+          message: error.message || "Error al cancelar la partida",
         })
       }
     }

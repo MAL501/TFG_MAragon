@@ -1,0 +1,30 @@
+# Dockerfile
+FROM node:18-alpine AS builder
+
+# Directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copiar archivos de package.json y lock
+COPY package.json package-lock.json ./
+
+# Instalar dependencias
+RUN npm ci --only=production
+
+# Copiar el resto del código
+COPY . .
+
+# Construir la app si aplica (usando un script build)
+RUN npm run build || echo "No build script, continuamos..."
+
+# --- Etapa final ---
+FROM node:18-alpine AS runtime
+WORKDIR /app
+
+# Copiar solo lo necesario desde el builder
+COPY --from=builder /app ./
+
+# Exponer el puerto (ajusta según el proyecto)
+EXPOSE 3000
+
+# Comando por defecto al correr el contenedor
+CMD ["node", "src/index.js"]

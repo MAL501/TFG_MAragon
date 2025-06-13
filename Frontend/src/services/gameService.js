@@ -1,4 +1,5 @@
 import { apiRequest } from "../utils/api"
+import { rollDiceFromServer } from "./diceService"
 
 export const gameService = {
   async createGame() {
@@ -100,12 +101,17 @@ export const gameService = {
     }
   },
 
-  // Cambiar para usar el endpoint correcto del servidor
+  // Mejorar makePlay para incluir información sobre eliminación de dados
   async makePlay(gameId, dice, column) {
     try {
       const data = await apiRequest(`/games/${gameId}/plays`, {
         method: "POST",
-        body: JSON.stringify({ dice, column }),
+        body: JSON.stringify({
+          dice,
+          column,
+          // Incluir información adicional para que el backend procese la eliminación
+          processOpponentRemoval: true,
+        }),
       })
 
       if (data.status === "success") {
@@ -170,6 +176,78 @@ export const gameService = {
     } catch (error) {
       console.error("Error en cancelGame:", error)
       throw new Error(error.message || "Error al cancelar la partida")
+    }
+  },
+
+  // Nuevo método para procesar eliminación de dados del oponente
+  async processOpponentDiceRemoval(gameId, playerColumn, diceValue) {
+    try {
+      const data = await apiRequest(`/games/${gameId}/remove-opponent-dice`, {
+        method: "POST",
+        body: JSON.stringify({
+          playerColumn,
+          diceValue,
+        }),
+      })
+
+      if (data.status === "success") {
+        return data.data
+      }
+
+      throw new Error("Error al procesar eliminación de dados del oponente")
+    } catch (error) {
+      console.error("Error en processOpponentDiceRemoval:", error)
+      throw new Error(error.message || "Error al procesar eliminación de dados del oponente")
+    }
+  },
+
+  // Nuevo método para obtener un dado del servidor para una partida específica
+  async rollDiceForGame(gameId) {
+    try {
+      // Verificar que el token exista antes de hacer la solicitud
+      const token = localStorage.getItem("token")
+      if (!token) {
+        console.warn("⚠️ No hay token de autenticación disponible para obtener dado de partida")
+        throw new Error("No hay token de autenticación")
+      }
+
+      console.log(`🎲 Solicitando dado para partida ${gameId}...`)
+      console.log("🔑 Token disponible:", token ? `${token.substring(0, 20)}...` : "No token")
+
+      const data = await apiRequest(`/games/${gameId}/roll-dice`, {
+        method: "POST",
+      })
+
+      if (data.status === "success") {
+        console.log("🎲 Dado de partida recibido:", data.data.dice)
+        return data.data.dice
+      }
+
+      console.error("❌ Formato de respuesta inesperado:", data)
+      throw new Error("Error al obtener dado del servidor")
+    } catch (error) {
+      console.error("❌ Error en rollDiceForGame:", error)
+      // Intentar con la API general de dados
+      console.log("🎲 Fallback a API general de dados...")
+      return await rollDiceFromServer()
+    }
+  },
+
+  // Nuevo método para eliminar una partida (solo el host puede hacerlo)
+  async deleteGame(gameId) {
+    try {
+      const data = await apiRequest(`/games/${gameId}`, {
+        method: "DELETE",
+      })
+
+      if (data.status === "success") {
+        return data.data
+      }
+
+      throw new Error("Error al eliminar la partida")
+    } catch (error) {
+      console.error("Error en deleteGame:", error)
+      throw new Error(error.message || "Error al eliminar la partida")
     }
   },
 }

@@ -1,6 +1,7 @@
-export const API_BASE_URL = "http://localhost:8080"
-export const SOCKET_URL = "http://localhost:8080"
-export const APP_BASE_URL = "/Matatena"
+// Variables de entorno para URLs y rutas base
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:8080";
+export const APP_BASE_URL = import.meta.env.VITE_APP_BASE_URL || "/Matatena";
 
 export const GAME_STATES = {
   WAITING: "waiting",
